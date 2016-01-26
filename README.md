@@ -15,6 +15,6 @@ Please fork this repository, write some code and update this README with any rel
 
 ## Version 1.0.0
 
-ios-code-test calculates and displays each Fibonacci number up to the maxiumum possible on an iPhone using unsigned integers.
+ios-code-test calculates and displays each Fibonacci number up to the maxiumum possible on an iPhone using unsigned integers while maintaining smooth scrolling in a table view.
 
 Tested on iPhone 6S and iPhone 4S, deployment target 9.1.
