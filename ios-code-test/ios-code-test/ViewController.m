@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 
+
 @interface ViewController ()
 
 @end
@@ -25,33 +26,43 @@
 
 -(void)calculateSequence{
     
+    // updated to use NSDecimalNumber instead of unsigned integers.
+    
     dispatch_queue_t concurrentQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(concurrentQueue, ^{
         
         // manually set the first two fibonacci numbers (1,1).
-        unsigned long long int firstNumber = 1;
-        unsigned long long int secondNumber = 1;
-        [fibonacciData addObject:[NSString stringWithFormat: @"%llu", firstNumber]];
-        [fibonacciData addObject:[NSString stringWithFormat: @"%llu", secondNumber]];
+        NSDecimalNumber *firstNumber = [NSDecimalNumber decimalNumberWithString:@"1"];
+        NSDecimalNumber *secondNumber = [NSDecimalNumber decimalNumberWithString:@"1"];
+        [fibonacciData addObject:[NSString stringWithFormat: @"%@", firstNumber]];
+        [fibonacciData addObject:[NSString stringWithFormat: @"%@", secondNumber]];
         
-        unsigned long long int nextNumber = 0;
+        NSDecimalNumber *nextNumber = 0;
         
         // use while with always TRUE because we don't know how many loops are needed.
         BOOL flag = TRUE;
         while(flag){
             
-            // check nextNumber will be no larger than UULONG_MAX.
-            if(secondNumber <= ULLONG_MAX - firstNumber){
-                nextNumber = firstNumber + secondNumber;
-            } else{
+            // check nextNumber will be no larger than max NSDecimalNumber.
+            NSDecimalNumber *decMAX = [NSDecimalNumber maximumDecimalNumber];
+            
+            if([secondNumber compare:[decMAX decimalNumberBySubtracting:firstNumber]] == NSOrderedSame || [secondNumber compare:[decMAX decimalNumberBySubtracting:firstNumber]] == NSOrderedAscending){
+                nextNumber = [firstNumber decimalNumberByAdding:secondNumber];
+            } else {
                 break;
             }
             
             // add nextNumber as string to resuls data
-            [fibonacciData addObject:[NSString stringWithFormat: @"%llu", nextNumber]];
+            [fibonacciData addObject:[NSString stringWithFormat: @"%@", nextNumber]];
             firstNumber = secondNumber;
             secondNumber = nextNumber;
+            
+            
         }
+        // reload Table View on main thread
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.fibonacciTableView reloadData];
+        });
     });
 }
 
